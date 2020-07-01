@@ -1,4 +1,4 @@
-##Image Optimization
+## Image Optimization
 
 Always use SVGs whenever possible, as: 
 * They're responsive.

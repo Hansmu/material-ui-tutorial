@@ -8,7 +8,8 @@ const arcBlue = '#0B72B9';
 const arcOrange = '#FFBA60';
 
 interface ApplicationTypography extends Typography {
-    tab: CSSProperties
+    tab: CSSProperties,
+    estimate: CSSProperties
 }
 
 export interface ApplicationTheme extends Theme {
@@ -69,6 +70,12 @@ export const theme = createMuiTheme({ // https://material-ui.com/customization/d
             textTransform: 'none',
             fontWeight: 700,
             fontSize: '1rem',
+        },
+        estimate: {
+            fontFamily: 'Pacifico',
+            fontSize: '1rem',
+            textTransform: 'none',
+            color: 'white'
         }
     }
 });

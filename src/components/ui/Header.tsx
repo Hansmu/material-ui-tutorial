@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {AppBar, Button, Tab, Tabs, Toolbar, useScrollTrigger} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 import {ApplicationTheme} from "./theme";
@@ -59,6 +59,11 @@ interface HeaderProps {
 
 export function Header(props: HeaderProps) {
     const classes = useStyles();
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event: React.ChangeEvent<{}>, value: any) => {
+        setValue(value);
+    };
 
     return (
         <React.Fragment>
@@ -69,7 +74,7 @@ export function Header(props: HeaderProps) {
                     */}
                     <Toolbar disableGutters>
                         <img className={classes.logo} src={logo} alt={'company logo'} />
-                        <Tabs className={classes.tabContainer}>
+                        <Tabs value={value} onChange={handleChange} className={classes.tabContainer} indicatorColor={'primary'}>
                             <Tab className={classes.tab} label={'Home'} />
                             <Tab className={classes.tab} label={'Services'} />
                             <Tab className={classes.tab} label={'The Revolution'} />

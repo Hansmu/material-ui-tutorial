@@ -1,7 +1,9 @@
 import React from 'react';
-import {AppBar, Toolbar, Typography, useScrollTrigger} from "@material-ui/core";
+import {AppBar, Toolbar, useScrollTrigger} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 import {ApplicationTheme} from "./theme";
+
+import logo from '../../assets/logo.svg';
 
 interface Props {
     /**
@@ -28,7 +30,11 @@ function ElevationScroll(props: Props) {
 
 const useStyles = makeStyles((theme: ApplicationTheme) => ({
     toolbarMargin: {
-        ...theme.mixins.toolbar /* It contains minHeight configuration */
+        ...theme.mixins.toolbar, /* It contains minHeight configuration */
+        marginBottom: '3rem'
+    },
+    logo: {
+        height: '7rem'
     }
 }));
 
@@ -46,10 +52,8 @@ export function Header(props: HeaderProps) {
                     {/*
                     The Toolbar component is needed to lay out the objects horizontally. Otherwise it would start stacking vertically.
                     */}
-                    <Toolbar>
-                        <Typography variant={'h3'} color={'secondary'}>
-                            Arc Development
-                        </Typography>
+                    <Toolbar disableGutters>
+                        <img className={classes.logo} src={logo} alt={'company logo'} />
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>

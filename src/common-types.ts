@@ -1,0 +1,1 @@
+export type PrimitiveObject = {[k: string]: string | number | boolean};

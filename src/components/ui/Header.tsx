@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppBar, Toolbar, useScrollTrigger} from "@material-ui/core";
+import {AppBar, Tab, Tabs, Toolbar, useScrollTrigger} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 import {ApplicationTheme} from "./theme";
 
@@ -35,6 +35,14 @@ const useStyles = makeStyles((theme: ApplicationTheme) => ({
     },
     logo: {
         height: '7rem'
+    },
+    tabContainer: {
+        marginLeft: 'auto'
+    },
+    tab: {
+        ...theme.typography.tab,
+        minWidth: 10,
+        marginLeft: '25px'
     }
 }));
 
@@ -54,6 +62,13 @@ export function Header(props: HeaderProps) {
                     */}
                     <Toolbar disableGutters>
                         <img className={classes.logo} src={logo} alt={'company logo'} />
+                        <Tabs className={classes.tabContainer}>
+                            <Tab className={classes.tab} label={'Home'} />
+                            <Tab className={classes.tab} label={'Services'} />
+                            <Tab className={classes.tab} label={'The Revolution'} />
+                            <Tab className={classes.tab} label={'About us'} />
+                            <Tab className={classes.tab} label={'Contact us'} />
+                        </Tabs>
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>

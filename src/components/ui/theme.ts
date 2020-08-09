@@ -1,11 +1,18 @@
 // @ts-ignore
 import {createMuiTheme, Theme} from "@material-ui/core";
+import {Typography} from "@material-ui/core/styles/createTypography";
+import {PrimitiveObject} from "../../common-types";
+import {CSSProperties} from "react";
 
 const arcBlue = '#0B72B9';
 const arcOrange = '#FFBA60';
 
-export interface ApplicationTheme extends Theme {
+interface ApplicationTypography extends Typography {
+    tab: CSSProperties
+}
 
+export interface ApplicationTheme extends Theme {
+    typography: ApplicationTypography
 }
 
 /* We can use this to overwrite any of the default theme values. We merge it with the default values.
@@ -54,6 +61,14 @@ export const theme = createMuiTheme({ // https://material-ui.com/customization/d
         common: {
             blue: arcBlue,
             orange: arcOrange
+        }
+    },
+    typography: {
+        tab: {
+            fontFamily: 'Raleway',
+            textTransform: 'none',
+            fontWeight: 700,
+            fontSize: '1rem',
         }
     }
 });

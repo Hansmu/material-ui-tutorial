@@ -4,6 +4,7 @@ import {makeStyles} from "@material-ui/styles";
 import {ApplicationTheme} from "./theme";
 
 import logo from '../../assets/logo.svg';
+import {Link, useHistory} from "react-router-dom";
 
 interface Props {
     /**
@@ -50,6 +51,12 @@ const useStyles = makeStyles((theme: ApplicationTheme) => ({
         marginLeft: '50px',
         marginRight: '25px',
         height: '45px'
+    },
+    logoContainer: {
+        padding: 0,
+        '&:hover': {
+            backgroundColor: 'transparent'
+        }
     }
 }));
 
@@ -59,7 +66,8 @@ interface HeaderProps {
 
 export function Header(props: HeaderProps) {
     const classes = useStyles();
-    const [value, setValue] = useState(0);
+    const history = useHistory();
+    const [value, setValue] = useState(history.location.pathname.replace('/', '') || 'home');
 
     const handleChange = (event: React.ChangeEvent<{}>, value: any) => {
         setValue(value);
@@ -73,13 +81,16 @@ export function Header(props: HeaderProps) {
                     The Toolbar component is needed to lay out the objects horizontally. Otherwise it would start stacking vertically.
                     */}
                     <Toolbar disableGutters>
-                        <img className={classes.logo} src={logo} alt={'company logo'} />
+                        <Button component={Link} to={'/'} className={classes.logoContainer} disableRipple onClick={() => setValue('home')}>
+                            <img className={classes.logo} src={logo} alt={'company logo'} />
+                        </Button>
+
                         <Tabs value={value} onChange={handleChange} className={classes.tabContainer} indicatorColor={'primary'}>
-                            <Tab className={classes.tab} label={'Home'} />
-                            <Tab className={classes.tab} label={'Services'} />
-                            <Tab className={classes.tab} label={'The Revolution'} />
-                            <Tab className={classes.tab} label={'About us'} />
-                            <Tab className={classes.tab} label={'Contact us'} />
+                            <Tab value={'home'} className={classes.tab} component={Link} label={'Home'} to={'/'} />
+                            <Tab value={'services'} className={classes.tab} component={Link} label={'Services'} to={'/services'} />
+                            <Tab value={'revolution'} className={classes.tab} component={Link} label={'The Revolution'} to={'/revolution'} />
+                            <Tab value={'about'} className={classes.tab} component={Link} label={'About us'} to={'/about'} />
+                            <Tab value={'contact'} className={classes.tab} component={Link} label={'Contact us'} to={'/contact'} />
                         </Tabs>
                         <Button variant={'contained'} color={'secondary'} className={classes.button}>
                             Free Estimate

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {AppBar, Button, Tab, Tabs, Toolbar, useScrollTrigger} from "@material-ui/core";
+import {AppBar, Button, Menu, MenuItem, Tab, Tabs, Toolbar, useScrollTrigger} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 import {ApplicationTheme} from "./theme";
 
@@ -57,6 +57,18 @@ const useStyles = makeStyles((theme: ApplicationTheme) => ({
         '&:hover': {
             backgroundColor: 'transparent'
         }
+    },
+    menu: {
+        backgroundColor: theme.palette.primary.main,
+        color: 'white',
+        borderRadius: 0
+    },
+    menuItem: {
+        ...theme.typography.tab,
+        opacity: 0.7,
+        '&:hover': {
+            opacity: 1
+        }
     }
 }));
 
@@ -67,10 +79,39 @@ interface HeaderProps {
 export function Header(props: HeaderProps) {
     const classes = useStyles();
     const history = useHistory();
-    const [value, setValue] = useState(history.location.pathname.replace('/', '') || 'home');
+    const currentUrl = history.location.pathname.replace('/', '');
+    const [value, setValue] = useState(currentUrl || 'home');
+    const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
 
     const handleChange = (event: React.ChangeEvent<{}>, value: any) => {
         setValue(value);
+    };
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleSubMenuClick = (value: string) => {
+        handleClose();
+        setValue(value);
+    };
+
+    const renderServicesSubMenu = (url: string, text: string) => {
+        return (
+            <MenuItem
+                onClick={() => handleSubMenuClick('services')}
+                component={Link}
+                to={url}
+                selected={url.replace('/', '') === currentUrl}
+                classes={{root: classes.menuItem}}
+            >
+                {text}
+            </MenuItem>
+        );
     };
 
     return (
@@ -87,7 +128,16 @@ export function Header(props: HeaderProps) {
 
                         <Tabs value={value} onChange={handleChange} className={classes.tabContainer} indicatorColor={'primary'}>
                             <Tab value={'home'} className={classes.tab} component={Link} label={'Home'} to={'/'} />
-                            <Tab value={'services'} className={classes.tab} component={Link} label={'Services'} to={'/services'} />
+                            <Tab
+                                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                                aria-haspopup={anchorEl ? true : undefined}
+                                value={'services'}
+                                className={classes.tab}
+                                component={Link}
+                                onMouseOver={handleClick}
+                                label={'Services'}
+                                to={'/services'}
+                            />
                             <Tab value={'revolution'} className={classes.tab} component={Link} label={'The Revolution'} to={'/revolution'} />
                             <Tab value={'about'} className={classes.tab} component={Link} label={'About us'} to={'/about'} />
                             <Tab value={'contact'} className={classes.tab} component={Link} label={'Contact us'} to={'/contact'} />
@@ -95,6 +145,20 @@ export function Header(props: HeaderProps) {
                         <Button variant={'contained'} color={'secondary'} className={classes.button}>
                             Free Estimate
                         </Button>
+                        <Menu
+                            id={'simple-menu'}
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                            classes={{paper: classes.menu}}
+                            MenuListProps={{onMouseLeave: handleClose}}
+                            elevation={0}
+                        >
+                            {renderServicesSubMenu('/services', 'Services')}
+                            {renderServicesSubMenu('/customsoftware', 'Custom Software Development')}
+                            {renderServicesSubMenu('/mobileapps', 'Mobile App Development')}
+                            {renderServicesSubMenu('/websites', '>Website Development')}
+                        </Menu>
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>

@@ -76,11 +76,32 @@ interface HeaderProps {
 
 }
 
+const subMenus: {[k: string]: {url: string, label: string}[]} = {
+    services: [
+        {
+            url: '/customsoftware',
+            label: 'Custom Software Development'
+        },
+        {
+            url: '/mobileapps',
+            label: 'Mobile App Development'
+        },
+        {
+            url: '/websites',
+            label: 'Website Development'
+        }
+    ]
+};
+
 export function Header(props: HeaderProps) {
     const classes = useStyles();
     const history = useHistory();
     const currentUrl = history.location.pathname.replace('/', '');
-    const [value, setValue] = useState(currentUrl || 'home');
+    const parentUrl = Object.keys(subMenus)
+        .find(parentUrl => subMenus[parentUrl]
+            .some(url => url.url === history.location.pathname)
+        );
+    const [value, setValue] = useState(parentUrl || currentUrl || 'home');
     const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
 
     const handleChange = (event: React.ChangeEvent<{}>, value: any) => {
@@ -100,13 +121,13 @@ export function Header(props: HeaderProps) {
         setValue(value);
     };
 
-    const renderServicesSubMenu = (url: string, text: string) => {
+    const renderServicesSubMenu = (url: string, text: string, parent: string = currentUrl) => {
         return (
             <MenuItem
                 onClick={() => handleSubMenuClick('services')}
                 component={Link}
                 to={url}
-                selected={url.replace('/', '') === currentUrl}
+                selected={url.replace('/', '') === parent}
                 classes={{root: classes.menuItem}}
             >
                 {text}
@@ -155,9 +176,7 @@ export function Header(props: HeaderProps) {
                             elevation={0}
                         >
                             {renderServicesSubMenu('/services', 'Services')}
-                            {renderServicesSubMenu('/customsoftware', 'Custom Software Development')}
-                            {renderServicesSubMenu('/mobileapps', 'Mobile App Development')}
-                            {renderServicesSubMenu('/websites', '>Website Development')}
+                            {subMenus.services.map(child => renderServicesSubMenu(child.url, child.label, 'services'))}
                         </Menu>
                     </Toolbar>
                 </AppBar>

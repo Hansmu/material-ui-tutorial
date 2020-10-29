@@ -1,11 +1,25 @@
 import React, {useState} from 'react';
-import {AppBar, Button, Menu, MenuItem, Tab, Tabs, Toolbar, useScrollTrigger, useTheme} from "@material-ui/core";
+import {
+    AppBar,
+    Button,
+    IconButton,
+    Menu,
+    MenuItem,
+    Tab,
+    Tabs,
+    Toolbar,
+    useScrollTrigger,
+    useTheme
+} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {ApplicationTheme} from "./theme";
 
 import logo from '../../assets/logo.svg';
 import {Link, useHistory} from "react-router-dom";
+
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import MenuIcon from '@material-ui/icons/Menu';
 
 interface Props {
     /**
@@ -82,6 +96,13 @@ const useStyles = makeStyles((theme: ApplicationTheme) => ({
         '&:hover': {
             opacity: 1
         }
+    },
+    drawerIconContainer: {
+        marginLeft: 'auto'
+    },
+    drawerIcon: {
+        height: '50px',
+        width: '50px'
     }
 }));
 
@@ -107,6 +128,8 @@ const subMenus: {[k: string]: {url: string, label: string}[]} = {
 };
 
 export function Header(props: HeaderProps) {
+    const iOS = (process as any).browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     const classes = useStyles();
     const history = useHistory();
     const currentUrl = history.location.pathname.replace('/', '');
@@ -114,6 +137,7 @@ export function Header(props: HeaderProps) {
         .find(parentUrl => subMenus[parentUrl]
             .some(url => url.url === history.location.pathname)
         );
+    const [openDrawer, setOpenDrawer] = useState(false);
     const [value, setValue] = useState(parentUrl || currentUrl || 'home');
     const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
 
@@ -189,6 +213,23 @@ export function Header(props: HeaderProps) {
         );
     };
 
+    const renderDrawer = () => {
+        return (
+            <>
+                <SwipeableDrawer
+                    disableBackdropTransition={!iOS}
+                    disableDiscovery={iOS}
+                    open={openDrawer}
+                    onClose={() => setOpenDrawer(false)}
+                    onOpen={() => setOpenDrawer(true)}
+                />
+                <IconButton className={classes.drawerIconContainer} onClick={() => setOpenDrawer(prevState => !prevState)}>
+                    <MenuIcon className={classes.drawerIcon} />
+                </IconButton>
+            </>
+        );
+    };
+
     return (
         <React.Fragment>
             <ElevationScroll>
@@ -202,7 +243,7 @@ export function Header(props: HeaderProps) {
                         </Button>
 
                         {isMediumOrBelowScreen
-                            ? null
+                            ? renderDrawer()
                             : renderTabs()
                         }
                     </Toolbar>

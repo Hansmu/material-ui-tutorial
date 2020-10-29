@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {AppBar, Button, Menu, MenuItem, Tab, Tabs, Toolbar, useScrollTrigger} from "@material-ui/core";
+import {AppBar, Button, Menu, MenuItem, Tab, Tabs, Toolbar, useScrollTrigger, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {ApplicationTheme} from "./theme";
 
 import logo from '../../assets/logo.svg';
@@ -32,10 +33,22 @@ function ElevationScroll(props: Props) {
 const useStyles = makeStyles((theme: ApplicationTheme) => ({
     toolbarMargin: {
         ...theme.mixins.toolbar, /* It contains minHeight configuration */
-        marginBottom: '3rem'
+        marginBottom: '3rem',
+        [theme.breakpoints.down('md')]: {
+            marginBottom: '2rem'
+        },
+        [theme.breakpoints.down('xs')]: {
+            marginBottom: '1.25rem'
+        }
     },
     logo: {
-        height: '7rem'
+        height: '7rem',
+        [theme.breakpoints.down('md')]: {
+            height: '6rem'
+        },
+        [theme.breakpoints.down('xs')]: {
+            height: '5rem'
+        }
     },
     tabContainer: {
         marginLeft: 'auto'
@@ -104,6 +117,9 @@ export function Header(props: HeaderProps) {
     const [value, setValue] = useState(parentUrl || currentUrl || 'home');
     const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
 
+    const theme = useTheme();
+    const isMediumOrBelowScreen = useMediaQuery(theme.breakpoints.down('md'));
+
     const handleChange = (event: React.ChangeEvent<{}>, value: any) => {
         setValue(value);
     };
@@ -135,6 +151,44 @@ export function Header(props: HeaderProps) {
         );
     };
 
+    const renderTabs = () => {
+        return (
+            <>
+                <Tabs value={value} onChange={handleChange} className={classes.tabContainer} indicatorColor={'primary'}>
+                    <Tab value={'home'} className={classes.tab} component={Link} label={'Home'} to={'/'} />
+                    <Tab
+                        aria-owns={anchorEl ? 'simple-menu' : undefined}
+                        aria-haspopup={anchorEl ? true : undefined}
+                        value={'services'}
+                        className={classes.tab}
+                        component={Link}
+                        onMouseOver={handleClick}
+                        label={'Services'}
+                        to={'/services'}
+                    />
+                    <Tab value={'revolution'} className={classes.tab} component={Link} label={'The Revolution'} to={'/revolution'} />
+                    <Tab value={'about'} className={classes.tab} component={Link} label={'About us'} to={'/about'} />
+                    <Tab value={'contact'} className={classes.tab} component={Link} label={'Contact us'} to={'/contact'} />
+                </Tabs>
+                <Button variant={'contained'} color={'secondary'} className={classes.button}>
+                    Free Estimate
+                </Button>
+                <Menu
+                    id={'simple-menu'}
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    classes={{paper: classes.menu}}
+                    MenuListProps={{onMouseLeave: handleClose}}
+                    elevation={0}
+                >
+                    {renderServicesSubMenu('/services', 'Services')}
+                    {subMenus.services.map(child => renderServicesSubMenu(child.url, child.label, 'services'))}
+                </Menu>
+            </>
+        );
+    };
+
     return (
         <React.Fragment>
             <ElevationScroll>
@@ -147,37 +201,10 @@ export function Header(props: HeaderProps) {
                             <img className={classes.logo} src={logo} alt={'company logo'} />
                         </Button>
 
-                        <Tabs value={value} onChange={handleChange} className={classes.tabContainer} indicatorColor={'primary'}>
-                            <Tab value={'home'} className={classes.tab} component={Link} label={'Home'} to={'/'} />
-                            <Tab
-                                aria-owns={anchorEl ? 'simple-menu' : undefined}
-                                aria-haspopup={anchorEl ? true : undefined}
-                                value={'services'}
-                                className={classes.tab}
-                                component={Link}
-                                onMouseOver={handleClick}
-                                label={'Services'}
-                                to={'/services'}
-                            />
-                            <Tab value={'revolution'} className={classes.tab} component={Link} label={'The Revolution'} to={'/revolution'} />
-                            <Tab value={'about'} className={classes.tab} component={Link} label={'About us'} to={'/about'} />
-                            <Tab value={'contact'} className={classes.tab} component={Link} label={'Contact us'} to={'/contact'} />
-                        </Tabs>
-                        <Button variant={'contained'} color={'secondary'} className={classes.button}>
-                            Free Estimate
-                        </Button>
-                        <Menu
-                            id={'simple-menu'}
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                            classes={{paper: classes.menu}}
-                            MenuListProps={{onMouseLeave: handleClose}}
-                            elevation={0}
-                        >
-                            {renderServicesSubMenu('/services', 'Services')}
-                            {subMenus.services.map(child => renderServicesSubMenu(child.url, child.label, 'services'))}
-                        </Menu>
+                        {isMediumOrBelowScreen
+                            ? null
+                            : renderTabs()
+                        }
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>
